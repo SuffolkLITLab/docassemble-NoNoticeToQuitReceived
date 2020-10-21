@@ -1,0 +1,166 @@
+comment: |
+  The metadata section controls the tab title and saved interview title. You can delete this section if you include this YAML file in another YAML file.
+metadata:
+  title: |
+    Defendant's Motion for Summary Judgement or Motion to Dimiss for Failure to Properly Terminate Tenancy
+  short title: |
+    No Notice Received
+---
+comment: |
+  This section is used by MAVirtualCourts to control how some of the questions work.
+mandatory: True
+code: |
+  interview_metadata # make sure we initialize the object
+  if not defined("interview_metadata['No_Notice_Received']"):
+    interview_metadata.initializeObject('No_Notice_Received')
+  interview_metadata['No_Notice_Received'].update({
+    'title': 'Motion for Summary Judgement or Motion to Dimiss for Failure to Properly Terminate Tenancy',
+    'short title': 'No Notice Received',
+    'description': 'This is a form for a defendant\'s motion for summary judgement or a motion to dismiss for failure to properly serve notice to terminate tenancy. Before filling out this form, make sure you have the name of the party who started this claim, the court that you will be going to, and the docket number issued to you.',
+    'original_form': '',
+    'allowed courts': [
+      'Housing Court',
+    ],
+    'categories': [
+      'Housing',
+    ],
+    'logic block variable': 'No_Notice_Received',
+    'attachment block variable': 'No_Notice_Received_attachment',
+    'typical role': 'defendant',
+  })
+---
+include:
+  - docassemble.MAVirtualCourt:basic-questions.yml
+---
+features:
+  navigation: True
+---
+sections:
+  - review_No_Notice_Received: Review your answers
+---
+id: interview_order_No_Notice_Received
+code: |
+  # This is a placeholder to control logic flow in this interview
+
+  basic_questions_intro_screen 
+  No_Notice_Received_intro
+  # Set the allowed courts for this interview
+  allowed_courts = interview_metadata["No_Notice_Received"]["allowed courts"]
+  nav.set_section('review_No_Notice_Received')
+  user_role = 'defendant'
+  docket_number
+  courts[0]
+  str(defendants)
+  users[0].address.address
+  str(plaintiffs)
+  signature_date
+  users[0]
+  users[0].email
+  users[0].phone_number
+  No_Notice_Received_preview_question # Pre-canned preview screen
+  basic_questions_signature_flow
+  users[0].signature
+  No_Notice_Received = True
+---
+comment: |
+  This question is used to introduce your interview. Please customize
+id: Motion for Summary Judgement or Motion to Dimiss for Failure to Properly Terminate Tenancy
+continue button field: No_Notice_Received_intro
+question: |
+  Defendant's Motion for Summary Judgement or Motion to Dimiss for Failure to Properly Terminate Tenancy
+subquestion: |
+  You should use this form if you are facing an eviction and you did not receive the notice to leave your home as part of the eviction process. This is a form for a defendant's motion for summary judgement or a motion to dismiss for failure to properly serve notice to terminate tenancy. 
+---
+id: Placeholder preview screen
+continue button field: No_Notice_Received_preview_question
+question: |
+  Placeholder preview screen
+subquestion: |
+  Here is a preview of the form you'll sign on the next page.
+
+   ${No_Notice_Received_attachment['preview']}
+---
+id: Let's get started.
+question: |
+  Let's get started.
+subquestion: |
+  Before filling out this form, make sure you have the name of the party who started this claim, the court that you will be going to, and the docket number issued to you. At the end of filling out this form you will be able to download a PDF of the Motion to submit regarding your case. 
+fields:
+  - 'Docket number': docket_numbers
+    datatype: number
+---
+progress: 100
+mandatory: True
+id: Placeholder download screen
+question: |
+  Placeholder download screen
+subquestion: |
+  Placeholder
+
+  ### Next steps
+
+  1. Step 1
+  1. Step 2
+
+  Below is a preview of your form.
+
+  ${No_Notice_Received_attachment['final'] }
+need: No_Notice_Received
+attachment code: No_Notice_Received_attachment['final']
+---
+objects:
+  - No_Notice_Received_attachment: DADict
+---
+attachment:
+    variable name: No_Notice_Received_attachment[i]
+    name: No Notice Received
+    filename: No_Notice_Received
+    docx template file: No_Notice_Received.docx
+---
+id: No_Notice_Received review screen
+event: review_No_Notice_Received
+question: |
+  Placeholder Review Screen
+subquestion: |
+  Edit your answers below
+review: 
+  - Edit: docket_numbers
+    button: |
+      Docket number:
+      ${ docket_numbers }
+  - Edit: users[0].signature
+    button: |
+      users[0].signature:
+      ${ users[0].signature }
+  - Edit: courts[0].name.first
+    button: |
+      courts[0]:
+      ${ courts[0] }
+  - Edit: defendants[0].name.first
+    button: |
+      defendants:
+      ${ defendants }
+  - Edit: users[0].address.address
+    button: |
+      users[0].address.address:
+      ${ users[0].address.address }
+  - Edit: plaintiffs[0].name.first
+    button: |
+      plaintiffs:
+      ${ plaintiffs }
+  - Edit: signature_date
+    button: |
+      signature_date:
+      ${ signature_date }
+  - Edit: users[0].name.first
+    button: |
+      users[0]:
+      ${ users[0] }
+  - Edit: users[0].email
+    button: |
+      users[0].email:
+      ${ users[0].email }
+  - Edit: users[0].phone_number
+    button: |
+      users[0].phone_number:
+      ${ users[0].phone_number }
