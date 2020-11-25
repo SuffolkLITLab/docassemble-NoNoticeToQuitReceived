@@ -53,6 +53,7 @@ code: |
   users[0]
   users[0].email
   users[0].phone_number
+  users[0].other_contact_method
   courts[0]
   dont_know_docket_number
   users[0].address.address
@@ -126,14 +127,16 @@ fields:
 validation code: |
   if dont_know_docket_number: docket_number = ' '
 ---
-id: landlords name
-question: |
-  What is your landlord's name?
-subquestion: |
-  Write it the same way it appears on the paperwork that told you
-  to go to court.
-fields:
-  - Landlord's full name: landlord
+id: Landlord Name
+question:  |
+  Who is your landlord? 
+subquestion:  |
+  Write your landlord's name exactly the same way as it is
+  written on your court paperwork.
+  See Example Below. 
+  [FILE landlord_name.jpg, 100%]
+fields:   
+  - Full name of landlord: landlord
 mandatory: true
 ---
 id: No_Notice_Received review screen
@@ -183,3 +186,8 @@ review:
     button: |
       users[0].phone_number:
       ${ users[0].phone_number }
+  - Edit: users[0].other_contact_method
+    button: |
+      users[0].other_contact_method:
+      ${ users[0].other_contact_method }
+---
