@@ -14,12 +14,14 @@ code: |
   if not defined("interview_metadata['No_Notice_Received']"):
     interview_metadata.initializeObject('No_Notice_Received')
   interview_metadata['No_Notice_Received'].update({
-    'title': 'Motion for Summary Judgement or Motion to Dimiss for Failure to Properly Terminate Tenancy',
+    'title': 'Motion for Summary Judgement or Motion to Dismiss for Failure to Properly Terminate Tenancy',
     'short title': 'No Notice Received',
     'description': 'This is a form for a defendant\'s motion for summary judgement or a motion to dismiss for failure to properly serve notice to terminate tenancy. Before filling out this form, make sure you have the name of the party who started this claim, the court that you will be going to, and the docket number issued to you.',
-    'original_form': '',
     'allowed courts': [
+      'Boston Municipal Court',
+      'District Court',
       'Housing Court',
+      'Superior Court',
     ],
     'categories': [
       'Housing',
@@ -41,35 +43,40 @@ sections:
 id: interview_order_No_Notice_Received
 code: |
   # This is a placeholder to control logic flow in this interview
-
   basic_questions_intro_screen 
   No_Notice_Received_intro
   # Set the allowed courts for this interview
   allowed_courts = interview_metadata["No_Notice_Received"]["allowed courts"]
   nav.set_section('review_No_Notice_Received')
   user_role = 'defendant'
-  docket_number
-  courts[0]
   str(defendants)
-  users[0].address.address
-  str(plaintiffs)
-  signature_date
   users[0]
   users[0].email
   users[0].phone_number
+  courts[0]
+  dont_know_docket_number
+  users[0].address.address
+  #str(plaintiffs)
+  landlord
+  signature_date
   No_Notice_Received_preview_question # Pre-canned preview screen
   basic_questions_signature_flow
   users[0].signature
   No_Notice_Received = True
 ---
 comment: |
-  This question is used to introduce your interview. Please customize
 id: Motion for Summary Judgement or Motion to Dimiss for Failure to Properly Terminate Tenancy
 continue button field: No_Notice_Received_intro
 question: |
-  Defendant's Motion for Summary Judgement or Motion to Dimiss for Failure to Properly Terminate Tenancy
+  Defendant's Motion for Summary Judgement or Motion to Dimiss for Failure to       Properly Terminate Tenancy
 subquestion: |
-  You should use this form if you are facing an eviction and you did not receive the notice to leave your home as part of the eviction process. This is a form for a defendant's motion for summary judgement or a motion to dismiss for failure to properly serve notice to terminate tenancy. 
+  If your landlord is taking you to court to evict you and **if you did not receive the Notice To Quit or Notice to Terminate Your Tenancy or 30 day or 14 day notice**, you should use this form. Before your landlord can file an eviction case, they first have to file a Notice to Quit with either 30 days or 14 days notice. 
+  
+  This is a form for a tenant's motion for summary judgement or a motion to         dismiss for failure to properly serve notice to terminate tenancy.
+  
+  **Before filling out this form, make sure you have the name of your landlord who started this claim, the court that you will be going to, and the docket       number issued to you.**
+  
+  After filling out this form you will be able to download a PDF of the Motion to   submit regarding your case.
 ---
 id: Placeholder preview screen
 continue button field: No_Notice_Received_preview_question
@@ -79,15 +86,6 @@ subquestion: |
   Here is a preview of the form you'll sign on the next page.
 
    ${No_Notice_Received_attachment['preview']}
----
-id: Let's get started.
-question: |
-  Let's get started.
-subquestion: |
-  Before filling out this form, make sure you have the name of the party who started this claim, the court that you will be going to, and the docket number issued to you. At the end of filling out this form you will be able to download a PDF of the Motion to submit regarding your case. 
-fields:
-  - 'Docket number': docket_numbers
-    datatype: number
 ---
 progress: 100
 mandatory: True
@@ -117,6 +115,27 @@ attachment:
     filename: No_Notice_Received
     docx template file: No_Notice_Received.docx
 ---
+id: Docket Number
+question: |
+  What is your docket number?
+fields:
+  - Docket number: docket_number
+    hide if: dont_know_docket_number
+  - I do not know: dont_know_docket_number
+    datatype: yesno
+validation code: |
+  if dont_know_docket_number: docket_number = ' '
+---
+id: landlords name
+question: |
+  What is your landlord's name?
+subquestion: |
+  Write it the same way it appears on the paperwork that told you
+  to go to court.
+fields:
+  - Landlord's full name: landlord
+mandatory: true
+---
 id: No_Notice_Received review screen
 event: review_No_Notice_Received
 question: |
@@ -144,10 +163,10 @@ review:
     button: |
       users[0].address.address:
       ${ users[0].address.address }
-  - Edit: plaintiffs[0].name.first
+  - Edit: landlord
     button: |
-      plaintiffs:
-      ${ plaintiffs }
+      landlord:
+      ${ landlord }
   - Edit: signature_date
     button: |
       signature_date:
